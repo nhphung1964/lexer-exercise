@@ -1,4 +1,5 @@
 from antlr4 import *
+from antlr4.error.ErrorListener import ErrorListener
 import importlib
 lang = "BKIT"
 lexer_name = lang + "Lexer"
@@ -43,17 +44,29 @@ class Tokenizer:
                 return ",".join(tokens)
         return ",".join(tokens + ["EOF"])
 
+class MyErrorListener(ErrorListener):
+    def __init__(self):
+        super(MyErrorListener, self).__init__()
+        self.has_error = False
+        self.msg = ""
+
+    def syntaxError(self, recognizer, offendingSymbol, line, column, msg, e):
+        self.has_error = True
+        self.msg = f"Syntax Error at line {line}:{column} - {msg}"
+
 
 class Parser:
     def __init__(self, input_string):
         self.input_stream = InputStream(input_string)
-        self.lexer = HLangLexer(self.input_stream)
+        self.lexer = lexer_class(self.input_stream)
         self.token_stream = CommonTokenStream(self.lexer)
         self.parser = parser_class(self.token_stream)
+        self.error_listener = MyErrorListener()
+        self.parser.removeErrorListeners()  
+        self.parser.addErrorListener(self.error_listener)
 
     def parse(self):
-        try:
-            self.parser.program()  # Assuming 'program' is the entry point of your grammar
-            return "success"
-        except Exception as e:
-            return str(e)
+        self.parser.program()
+        if self.error_listener.has_error:
+            return self.error_listener.msg
+        return "success"

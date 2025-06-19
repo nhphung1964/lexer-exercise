@@ -128,7 +128,7 @@ test-parser: clean setup build
 	@echo "$(YELLOW)Running parser tests...$(RESET)"
 	$(call RM_CMD,$(REPORT_DIR)/parser)
 	$(call MKDIR_CMD,$(REPORT_DIR))
-	@PYTHONPATH=$(CURDIR) pytest tests/test_parser.py --html=$(REPORT_DIR)/parser/index.html --timeout=3 --self-contained-html || true
+	@PYTHONPATH=$(CURDIR) pytest tests/test_parser.py --html=$(REPORT_DIR)/parser/index.html --timeout=3 --self-contained-html --tb=short || true
 	@echo "$(GREEN)Parser tests completed. Reports generated at $(REPORT_DIR)/parser/index.html$(RESET)"
 	@$(MAKE) clean-cache
 

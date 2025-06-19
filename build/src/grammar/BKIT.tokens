@@ -1,0 +1,9 @@
+ID=1
+SEMI=2
+COLON=3
+VAR=4
+WS=5
+ERROR_CHAR=6
+';'=2
+':'=3
+'Var'=4
